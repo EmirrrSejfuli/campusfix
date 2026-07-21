@@ -1,0 +1,48 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: campusfix-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: campusfix
+      POSTGRES_PASSWORD: campusfix_password
+      POSTGRES_DB: campusfix
+    volumes:
+      - campusfix_db_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  backend:
+    build: ./backend
+    container_name: campusfix-backend
+    restart: unless-stopped
+    depends_on:
+      - db
+    environment:
+      PORT: 3000
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_USERNAME: campusfix
+      DB_PASSWORD: campusfix_password
+      DB_DATABASE: campusfix
+      JWT_SECRET: change_this_super_secret_key_in_production
+      JWT_EXPIRES_IN: 1d
+    volumes:
+      - campusfix_uploads:/app/uploads
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build: ./frontend
+    container_name: campusfix-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "4200:80"
+
+volumes:
+  campusfix_db_data:
+  campusfix_uploads:
