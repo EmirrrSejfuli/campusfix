@@ -29,6 +29,7 @@ function buildService() {
   };
   const notificationsService: any = { notify: jest.fn() };
   const watchesService: any = { findWatchersForLocation: jest.fn().mockResolvedValue([]) };
+  const adminZonesService: any = { findResponsibleAdminsForLocation: jest.fn().mockResolvedValue([]) };
 
   const service = new IssuesService(
     issuesRepository,
@@ -37,9 +38,10 @@ function buildService() {
     aiService,
     notificationsService,
     watchesService,
+    adminZonesService,
   );
 
-  return { service, issuesRepository, confirmationsRepository, categoriesService, aiService, notificationsService, watchesService };
+  return { service, issuesRepository, confirmationsRepository, categoriesService, aiService, notificationsService, watchesService, adminZonesService };
 }
 
 describe('IssuesService', () => {
@@ -82,6 +84,19 @@ describe('IssuesService', () => {
       // Only the non-reporter watcher should be notified.
       expect(notificationsService.notify).toHaveBeenCalledTimes(1);
       expect(notificationsService.notify).toHaveBeenCalledWith(watcherUser, 'notif.watchedLocation', expect.any(Object));
+    });
+
+    it('notifies the admin responsible for a matching zone', async () => {
+      const { service, adminZonesService, notificationsService } = buildService();
+      const responsibleAdmin: any = { id: 'admin-1' };
+      adminZonesService.findResponsibleAdminsForLocation.mockResolvedValue([
+        { admin: responsibleAdmin, zone: 'Salla 307' },
+      ]);
+
+      const dto: any = { title: 'Drita e prishur', description: 'Përshkrim i gjatë problemi', location: 'Salla 307' };
+      await service.create(dto, { id: 'reporter-1' } as any, []);
+
+      expect(notificationsService.notify).toHaveBeenCalledWith(responsibleAdmin, 'notif.zoneReport', expect.any(Object));
     });
   });
 

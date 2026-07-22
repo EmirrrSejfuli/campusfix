@@ -13,6 +13,7 @@ import { NotificationsModule } from './notifications/notifications.module';
 import { WatchesModule } from './watches/watches.module';
 import { CommentsModule } from './comments/comments.module';
 import { HealthModule } from './health/health.module';
+import { AdminZonesModule } from './admin-zones/admin-zones.module';
 
 @Module({
   imports: [
@@ -56,6 +57,7 @@ import { HealthModule } from './health/health.module';
     WatchesModule,
     CommentsModule,
     HealthModule,
+    AdminZonesModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

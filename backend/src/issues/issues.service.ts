@@ -11,6 +11,7 @@ import { AiService } from '../ai/ai.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Lang, t } from '../common/i18n';
 import { WatchesService } from '../watches/watches.service';
+import { AdminZonesService } from '../admin-zones/admin-zones.service';
 import { Confirmation } from '../confirmations/confirmation.entity';
 
 @Injectable()
@@ -24,6 +25,7 @@ export class IssuesService {
     private aiService: AiService,
     private notificationsService: NotificationsService,
     private watchesService: WatchesService,
+    private adminZonesService: AdminZonesService,
   ) {}
 
   async create(dto: CreateIssueDto, reportedBy: User, imageUrls: string[] = []): Promise<Issue> {
@@ -71,6 +73,16 @@ export class IssuesService {
         if (watch.user.id === reportedBy.id) continue; // don't notify the reporter about their own report
         await this.notificationsService.notify(watch.user, 'notif.watchedLocation', {
           location: watch.location,
+          title: saved.title,
+        });
+      }
+
+      // Notify admin(s) specifically responsible for this location/zone, in addition
+      // to it appearing in the shared "Manage Reports" list every admin can already see.
+      const responsibleAdmins = await this.adminZonesService.findResponsibleAdminsForLocation(saved.location);
+      for (const zone of responsibleAdmins) {
+        await this.notificationsService.notify(zone.admin, 'notif.zoneReport', {
+          zone: zone.zone,
           title: saved.title,
         });
       }

@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { AuthService } from '../../core/services/auth.service';
 import { UsersService } from '../../core/services/users.service';
 import { WatchesService, Watch } from '../../core/services/watches.service';
+import { AdminZonesService, AdminZone } from '../../core/services/admin-zones.service';
 import { UserStats } from '../../core/models';
 import { TranslatePipe } from '../pipes/translate.pipe';
 
@@ -61,6 +62,28 @@ import { TranslatePipe } from '../pipes/translate.pipe';
         <p class="empty">{{ 'profile.noWatches' | translate }}</p>
       </ng-template>
     </div>
+
+    <div class="card watches-card" *ngIf="auth.isAdmin()">
+      <h3>{{ 'profile.adminZones' | translate }}</h3>
+      <p class="watches-subtitle">{{ 'profile.adminZonesHint' | translate }}</p>
+
+      <div class="add-watch">
+        <input [(ngModel)]="newZone" [placeholder]="'profile.addZonePlaceholder' | translate" (keyup.enter)="addZone()" />
+        <button class="btn btn-primary" (click)="addZone()" [disabled]="!newZone.trim() || addingZone">
+          {{ 'profile.addLocation' | translate }}
+        </button>
+      </div>
+
+      <div class="watch-list" *ngIf="zones.length > 0; else noZones">
+        <div class="watch-item" *ngFor="let z of zones">
+          <span>{{ z.zone }}</span>
+          <button (click)="removeZone(z)">✕</button>
+        </div>
+      </div>
+      <ng-template #noZones>
+        <p class="empty">{{ 'profile.noZones' | translate }}</p>
+      </ng-template>
+    </div>
   `,
   styles: [`
     .profile-header { display: flex; align-items: center; gap: 20px; margin-bottom: 20px; }
@@ -93,16 +116,23 @@ export class ProfileComponent implements OnInit {
   newLocation = '';
   addingWatch = false;
 
+  zones: AdminZone[] = [];
+  newZone = '';
+  addingZone = false;
+
   constructor(
     public auth: AuthService,
     private usersService: UsersService,
     private watchesService: WatchesService,
+    private adminZonesService: AdminZonesService,
   ) {}
 
   ngOnInit(): void {
     if (!this.auth.isAdmin()) {
       this.usersService.getMyStats().subscribe((s) => (this.stats = s));
       this.loadWatches();
+    } else {
+      this.loadZones();
     }
   }
 
@@ -127,6 +157,30 @@ export class ProfileComponent implements OnInit {
   removeWatch(w: Watch): void {
     this.watchesService.remove(w.id).subscribe(() => {
       this.watches = this.watches.filter((x) => x.id !== w.id);
+    });
+  }
+
+  loadZones(): void {
+    this.adminZonesService.getMine().subscribe((z) => (this.zones = z));
+  }
+
+  addZone(): void {
+    const zone = this.newZone.trim();
+    if (!zone) return;
+    this.addingZone = true;
+    this.adminZonesService.create(zone).subscribe({
+      next: () => {
+        this.newZone = '';
+        this.addingZone = false;
+        this.loadZones();
+      },
+      error: () => (this.addingZone = false),
+    });
+  }
+
+  removeZone(z: AdminZone): void {
+    this.adminZonesService.remove(z.id).subscribe(() => {
+      this.zones = this.zones.filter((x) => x.id !== z.id);
     });
   }
 

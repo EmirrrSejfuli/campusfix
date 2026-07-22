@@ -183,6 +183,11 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'profile.addLocationPlaceholder': 'p.sh. Biblioteka, Salla B3...',
     'profile.addLocation': 'Shto',
     'profile.noWatches': 'Ende s\'ndiqni asnjë lokacion.',
+    'profile.adminZones': 'Zonat e mia të përgjegjësisë',
+    'profile.adminZonesHint': 'Merr njoftim i pari kur krijohet raportim i ri në një nga këto zona.',
+    'profile.addZonePlaceholder': 'p.sh. Bibliotekë, Konvikt A...',
+    'profile.noZones': 'Ende s\'keni caktuar asnjë zonë përgjegjësie.',
+    'notif.zoneReport': 'Raportim i ri në zonën tuaj "{zone}": {title}',
 
     // Dashboard
     'dash.byLocation': 'Lokacionet me më shumë probleme',
@@ -415,6 +420,11 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'profile.addLocationPlaceholder': 'e.g. Library, Room B3...',
     'profile.addLocation': 'Add',
     'profile.noWatches': "You aren't watching any locations yet.",
+    'profile.adminZones': 'My responsibility zones',
+    'profile.adminZonesHint': 'Get notified first when a new report is created in one of these zones.',
+    'profile.addZonePlaceholder': 'e.g. Library, Dorm A...',
+    'profile.noZones': "You haven't set any responsibility zones yet.",
+    'notif.zoneReport': 'New report in your zone "{zone}": {title}',
 
     // Dashboard
     'dash.byLocation': 'Locations with the most issues',
@@ -647,6 +657,11 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'profile.addLocationPlaceholder': 'пр. Библиотека, Сала Б3...',
     'profile.addLocation': 'Додади',
     'profile.noWatches': 'Сè уште не следиш ниту една локација.',
+    'profile.adminZones': 'Мои зони на одговорност',
+    'profile.adminZonesHint': 'Биди прв известен кога ќе се создаде нова пријава во една од овие зони.',
+    'profile.addZonePlaceholder': 'пр. Библиотека, Дом А...',
+    'profile.noZones': 'Сè уште немаш поставено зони на одговорност.',
+    'notif.zoneReport': 'Нова пријава во твојата зона "{zone}": {title}',
 
     // Dashboard
     'dash.byLocation': 'Локации со најмногу проблеми',

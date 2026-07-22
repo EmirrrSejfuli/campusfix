@@ -10,9 +10,10 @@ import { AiModule } from '../ai/ai.module';
 import { NotificationsModule } from '../notifications/notifications.module';
 import { UsersModule } from '../users/users.module';
 import { WatchesModule } from '../watches/watches.module';
+import { AdminZonesModule } from '../admin-zones/admin-zones.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Issue, Confirmation]), CategoriesModule, AiModule, NotificationsModule, UsersModule, WatchesModule],
+  imports: [TypeOrmModule.forFeature([Issue, Confirmation]), CategoriesModule, AiModule, NotificationsModule, UsersModule, WatchesModule, AdminZonesModule],
   providers: [IssuesService],
   controllers: [IssuesController, PublicStatsController],
   exports: [IssuesService],
