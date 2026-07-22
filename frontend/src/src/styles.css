@@ -1,0 +1,161 @@
+:root {
+  --ink: #0F172A;
+  --ink-soft: #52606D;
+  --ink-faint: #8A93A1;
+  --paper: #F5F6F8;
+  --surface: #FFFFFF;
+  --line: #E3E6EC;
+  --line-strong: #C7CCD6;
+
+  --accent: #FF5A1F;
+  --accent-dark: #D6430D;
+  --accent-bg: #FFF0E8;
+
+  --brand-ink: #14213D;
+
+  --success: #0F7A5C;
+  --success-bg: #E4F5EE;
+  --warning: #A9660A;
+  --warning-bg: #FDF0DA;
+  --danger: #C0301F;
+  --danger-bg: #FCE8E5;
+  --info: #3557C7;
+  --info-bg: #EAEEFB;
+
+  --radius: 8px;
+  --radius-lg: 14px;
+
+  --font-display: 'Space Grotesk', sans-serif;
+  --font-body: 'IBM Plex Sans', -apple-system, sans-serif;
+  --font-mono: 'IBM Plex Mono', monospace;
+}
+
+[data-theme="dark"] {
+  --ink: #E7EAF0;
+  --ink-soft: #A3ACBA;
+  --ink-faint: #6B7385;
+  --paper: #0F1420;
+  --surface: #171D2C;
+  --line: #2A3242;
+  --line-strong: #3B4457;
+
+  --accent: #FF7A45;
+  --accent-dark: #FF5A1F;
+  --accent-bg: #3A2418;
+
+  --brand-ink: #E7EAF0;
+
+  --success: #34C795;
+  --success-bg: #123527;
+  --warning: #E0A23B;
+  --warning-bg: #3A2C10;
+  --danger: #F0685A;
+  --danger-bg: #3A1815;
+  --info: #7B94F5;
+  --info-bg: #1B2140;
+}
+
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-body);
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3 { font-family: var(--font-display); letter-spacing: -0.01em; }
+
+button { cursor: pointer; font-family: inherit; }
+
+/* ---------- Buttons ---------- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 11px 20px;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  font-weight: 600;
+  font-size: 14px;
+  font-family: var(--font-body);
+  transition: background 0.12s ease, border-color 0.12s ease, transform 0.06s ease;
+}
+.btn:active { transform: scale(0.98); }
+.btn-primary { background: var(--accent); color: #FFFFFF; }
+.btn-primary:hover { background: var(--accent-dark); }
+.btn-outline { background: var(--surface); border-color: var(--line-strong); color: var(--ink); }
+.btn-outline:hover { border-color: var(--ink-soft); background: var(--paper); }
+.btn-danger { background: var(--danger-bg); color: var(--danger); }
+.btn-danger:hover { background: #F8D5D0; }
+
+/* ---------- Cards ---------- */
+.card {
+  background: var(--surface);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--line);
+  padding: 22px;
+}
+
+/* ---------- Form controls ---------- */
+input, select, textarea {
+  width: 100%;
+  padding: 11px 13px;
+  border: 1px solid var(--line-strong);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: var(--font-body);
+  background: var(--surface);
+  color: var(--ink);
+}
+input::placeholder, textarea::placeholder { color: var(--ink-faint); }
+input:focus, select:focus, textarea:focus {
+  outline: none;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-bg);
+}
+
+label {
+  display: block;
+  font-size: 12.5px;
+  font-weight: 600;
+  margin-bottom: 6px;
+  color: var(--ink-soft);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* ---------- Status badges (stamp style) ---------- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 11.5px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  border: 1px solid transparent;
+}
+.badge-pending { background: var(--warning-bg); color: var(--warning); border-color: #F3DBAE; }
+.badge-in_progress { background: var(--info-bg); color: var(--info); border-color: #C9D3F2; }
+.badge-resolved { background: var(--success-bg); color: var(--success); border-color: #BFE6D6; }
+.badge-rejected { background: var(--danger-bg); color: var(--danger); border-color: #F3C6C0; }
+.badge-low { background: var(--paper); color: var(--ink-soft); border-color: var(--line); }
+.badge-medium { background: var(--warning-bg); color: var(--warning); border-color: #F3DBAE; }
+.badge-high { background: var(--danger-bg); color: var(--danger); border-color: #F3C6C0; }
+
+/* ---------- Ticket ID tag ---------- */
+.ticket-id {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--ink-faint);
+  letter-spacing: 0.03em;
+}
