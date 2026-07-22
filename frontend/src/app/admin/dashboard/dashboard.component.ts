@@ -28,6 +28,10 @@ import { TranslatePipe } from '../../shared/pipes/translate.pipe';
         <span class="label">{{ 'dash.highUrgency' | translate }}</span>
         <span class="value">{{ countFor(analytics.byUrgency, 'urgency', 'high') }}</span>
       </div>
+      <div class="stat" *ngIf="analytics.avgSatisfaction !== null">
+        <span class="label">{{ 'dash.satisfaction' | translate }}</span>
+        <span class="value" style="color: var(--warning)">{{ analytics.avgSatisfaction }}<span class="unit">/5</span></span>
+      </div>
     </div>
 
     <div class="card" style="margin-bottom:14px" *ngIf="trend.length > 0">
@@ -84,7 +88,7 @@ import { TranslatePipe } from '../../shared/pipes/translate.pipe';
     .eyebrow { display: inline-block; font-family: var(--font-mono); font-size: 11px; font-weight: 600; color: var(--info); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 8px; }
     h1 { font-size: 22px; margin: 0 0 6px; color: var(--ink); }
     .subtitle { color: var(--ink-soft); font-size: 14px; margin: 0 0 22px; }
-    .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 14px; }
+    .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; margin-bottom: 14px; }
     .stat { display: flex; flex-direction: column; gap: 8px; background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius-lg); padding: 20px; }
     .stat-accent { border-color: var(--danger); background: var(--danger-bg); }
     .stat .label { font-size: 12.5px; color: var(--ink-soft); font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; }

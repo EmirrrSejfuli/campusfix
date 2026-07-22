@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { Issue } from './entities/issue.entity';
+import { Confirmation } from '../confirmations/confirmation.entity';
 import { IssuesService } from './issues.service';
 import { IssuesController } from './issues.controller';
 import { PublicStatsController } from './public-stats.controller';
@@ -11,7 +12,7 @@ import { UsersModule } from '../users/users.module';
 import { WatchesModule } from '../watches/watches.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Issue]), CategoriesModule, AiModule, NotificationsModule, UsersModule, WatchesModule],
+  imports: [TypeOrmModule.forFeature([Issue, Confirmation]), CategoriesModule, AiModule, NotificationsModule, UsersModule, WatchesModule],
   providers: [IssuesService],
   controllers: [IssuesController, PublicStatsController],
   exports: [IssuesService],

@@ -36,6 +36,14 @@ export class AuthService {
     this.router.navigate(['/login']);
   }
 
+  forgotPassword(email: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${API_BASE_URL}/auth/forgot-password`, { email });
+  }
+
+  resetPassword(token: string, newPassword: string): Observable<{ message: string }> {
+    return this.http.post<{ message: string }>(`${API_BASE_URL}/auth/reset-password`, { token, newPassword });
+  }
+
   getToken(): string | null {
     return localStorage.getItem(TOKEN_KEY);
   }

@@ -40,6 +40,7 @@ export interface Issue {
   reportedBy: User;
   createdAt: string;
   resolvedAt?: string;
+  satisfactionRating?: number | null;
 }
 
 export interface PublicStats {
@@ -62,6 +63,8 @@ export interface Analytics {
   byCategory: { category: string; count: string }[];
   byUrgency: { urgency: string; count: string }[];
   avgResolutionHours: number;
+  avgSatisfaction: number | null;
+  ratedCount: number;
 }
 
 export interface TrendPoint {

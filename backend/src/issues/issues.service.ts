@@ -11,12 +11,15 @@ import { AiService } from '../ai/ai.service';
 import { NotificationsService } from '../notifications/notifications.service';
 import { Lang, t } from '../common/i18n';
 import { WatchesService } from '../watches/watches.service';
+import { Confirmation } from '../confirmations/confirmation.entity';
 
 @Injectable()
 export class IssuesService {
   constructor(
     @InjectRepository(Issue)
     private issuesRepository: Repository<Issue>,
+    @InjectRepository(Confirmation)
+    private confirmationsRepository: Repository<Confirmation>,
     private categoriesService: CategoriesService,
     private aiService: AiService,
     private notificationsService: NotificationsService,
@@ -161,12 +164,20 @@ export class IssuesService {
           }, 0) / resolvedIssues.length
         : 0;
 
+    const ratedIssues = resolvedIssues.filter((i) => i.satisfactionRating != null);
+    const avgSatisfaction =
+      ratedIssues.length > 0
+        ? ratedIssues.reduce((acc, i) => acc + (i.satisfactionRating as number), 0) / ratedIssues.length
+        : null;
+
     return {
       total,
       byStatus: byStatusRaw,
       byCategory: byCategoryRaw,
       byUrgency: byUrgencyRaw,
       avgResolutionHours: Math.round(avgResolutionHours * 10) / 10,
+      avgSatisfaction: avgSatisfaction !== null ? Math.round(avgSatisfaction * 10) / 10 : null,
+      ratedCount: ratedIssues.length,
     };
   }
 
@@ -236,6 +247,54 @@ export class IssuesService {
       throw new ForbiddenException(t(lang, 'cancelPendingOnly'));
     }
     await this.issuesRepository.delete(id);
+  }
+
+  /** Reporter rates their resolved issue 1-5 — can only be done once, only by the reporter, only when resolved. */
+  async rateIssue(id: string, userId: string, rating: number, lang: Lang = 'sq'): Promise<Issue> {
+    const issue = await this.findOne(id, lang);
+    if (issue.reportedBy.id !== userId) {
+      throw new ForbiddenException(t(lang, 'cancelOwnOnly'));
+    }
+    if (issue.status !== IssueStatus.RESOLVED) {
+      throw new ForbiddenException('Vetëm raportimet e zgjidhura mund të vlerësohen.');
+    }
+    if (issue.satisfactionRating != null) {
+      throw new ForbiddenException('Ky raportim është vlerësuar tashmë.');
+    }
+    issue.satisfactionRating = Math.min(5, Math.max(1, Math.round(rating)));
+    return this.issuesRepository.save(issue);
+  }
+
+  /** Toggles "this affects me too" for the given user — one confirmation per user per issue. */
+  async toggleConfirmation(issueId: string, userId: string, lang: Lang = 'sq'): Promise<{ confirmed: boolean; count: number }> {
+    const issue = await this.findOne(issueId, lang);
+    if (issue.reportedBy.id === userId) {
+      throw new ForbiddenException('Nuk mund ta konfirmoni vetë raportimin tuaj.');
+    }
+
+    const existing = await this.confirmationsRepository.findOne({
+      where: { issue: { id: issueId }, user: { id: userId } },
+    });
+
+    if (existing) {
+      await this.confirmationsRepository.delete(existing.id);
+    } else {
+      await this.confirmationsRepository.save(
+        this.confirmationsRepository.create({ issue: { id: issueId } as Issue, user: { id: userId } as User }),
+      );
+    }
+
+    const count = await this.confirmationsRepository.count({ where: { issue: { id: issueId } } });
+    return { confirmed: !existing, count };
+  }
+
+  async getConfirmationState(issueId: string, userId?: string): Promise<{ confirmed: boolean; count: number }> {
+    const count = await this.confirmationsRepository.count({ where: { issue: { id: issueId } } });
+    if (!userId) return { confirmed: false, count };
+    const existing = await this.confirmationsRepository.findOne({
+      where: { issue: { id: issueId }, user: { id: userId } },
+    });
+    return { confirmed: !!existing, count };
   }
 
   /** Lightweight list of geo-tagged issues for the campus map view. */

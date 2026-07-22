@@ -80,6 +80,30 @@ const OVERDUE_HOURS = 24; // high-urgency reports still open after this many hou
 
       <p class="dup" *ngIf="issue.isPossibleDuplicate">⚠ {{ 'detail.duplicateWarning' | translate }}</p>
 
+      <div class="confirm-row" *ngIf="!auth.isAdmin() && !isOwner() && !editing">
+        <button class="btn" [class.btn-primary]="confirmed" [class.btn-outline]="!confirmed" (click)="toggleConfirm()" [disabled]="confirmLoading">
+          👍 {{ (confirmed ? 'detail.confirmedByMe' : 'detail.confirmToo') | translate }}
+        </button>
+        <span class="confirm-count" *ngIf="confirmCount > 0">{{ confirmCount }} {{ 'detail.othersConfirmed' | translate }}</span>
+      </div>
+
+      <div class="rating-box" *ngIf="isOwner() && issue.status === 'resolved' && !editing">
+        <ng-container *ngIf="!issue.satisfactionRating">
+          <p class="rating-prompt">{{ 'detail.ratePrompt' | translate }}</p>
+          <div class="stars">
+            <span *ngFor="let s of [1,2,3,4,5]" class="star"
+              (click)="submitRating(s)"
+              (mouseenter)="hoverStar = s"
+              (mouseleave)="hoverStar = 0">
+              {{ s <= hoverStar ? '★' : '☆' }}
+            </span>
+          </div>
+        </ng-container>
+        <p class="rating-done" *ngIf="issue.satisfactionRating">
+          {{ 'detail.yourRating' | translate }}: {{ '★'.repeat(issue.satisfactionRating) }}{{ '☆'.repeat(5 - issue.satisfactionRating) }}
+        </p>
+      </div>
+
       <div class="owner-actions" *ngIf="isOwner() && issue.status === 'pending' && !editing">
         <button class="btn btn-outline" (click)="startEdit()">{{ 'detail.edit' | translate }}</button>
         <button class="btn btn-danger" (click)="cancelIssue()">{{ 'detail.cancel' | translate }}</button>
@@ -140,6 +164,13 @@ const OVERDUE_HOURS = 24; // high-urgency reports still open after this many hou
     }
     .watch-btn:hover { background: #FFE3D3; }
     .dup { color: var(--warning); font-size: 13px; margin: 16px 0 0; font-weight: 600; }
+    .confirm-row { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+    .confirm-count { font-size: 12.5px; color: var(--ink-soft); }
+    .rating-box { margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
+    .rating-prompt { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 8px; }
+    .stars { display: flex; gap: 6px; }
+    .star { font-size: 28px; color: var(--warning); cursor: pointer; line-height: 1; user-select: none; }
+    .rating-done { font-size: 16px; color: var(--warning); margin: 0; }
     .owner-actions { display: flex; gap: 10px; margin-top: 22px; padding-top: 18px; border-top: 1px solid var(--line); }
     .edit-form { margin-bottom: 18px; }
     .edit-actions { display: flex; gap: 10px; margin-top: 16px; }
@@ -180,6 +211,10 @@ export class IssueDetailComponent implements OnInit {
   comments: IssueComment[] = [];
   newComment = '';
   sendingComment = false;
+  confirmed = false;
+  confirmCount = 0;
+  confirmLoading = false;
+  hoverStar = 0;
   private myWatchId: string | null = null;
 
   closeLightbox = () => (this.lightboxOpen = false);
@@ -202,6 +237,30 @@ export class IssueDetailComponent implements OnInit {
       if (issue.location && !this.auth.isAdmin()) this.checkWatchState(issue.location);
     });
     this.loadComments(id);
+    this.issuesService.getConfirmationState(id).subscribe((res) => {
+      this.confirmed = res.confirmed;
+      this.confirmCount = res.count;
+    });
+  }
+
+  toggleConfirm(): void {
+    if (!this.issue) return;
+    this.confirmLoading = true;
+    this.issuesService.toggleConfirmation(this.issue.id).subscribe({
+      next: (res) => {
+        this.confirmed = res.confirmed;
+        this.confirmCount = res.count;
+        this.confirmLoading = false;
+      },
+      error: () => (this.confirmLoading = false),
+    });
+  }
+
+  submitRating(stars: number): void {
+    if (!this.issue) return;
+    this.issuesService.rateIssue(this.issue.id, stars).subscribe((updated) => {
+      this.issue = updated;
+    });
   }
 
   private parsePhotos(issue: Issue): string[] {

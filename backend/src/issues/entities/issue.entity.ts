@@ -71,4 +71,7 @@ export class Issue {
 
   @Column({ nullable: true })
   resolvedAt: Date;
+
+  @Column({ type: 'int', nullable: true })
+  satisfactionRating: number | null; // 1-5, set by the reporter after the report is resolved
 }

@@ -42,4 +42,28 @@ export class UsersService {
   async validatePassword(plain: string, hashed: string): Promise<boolean> {
     return bcrypt.compare(plain, hashed);
   }
+
+  async setResetToken(userId: string, tokenHash: string, expires: Date): Promise<void> {
+    await this.usersRepository.update(userId, {
+      resetPasswordTokenHash: tokenHash,
+      resetPasswordExpires: expires,
+    });
+  }
+
+  /** Finds a user with a matching, still-valid (non-expired) reset token hash. */
+  async findByValidResetTokenHash(tokenHash: string): Promise<User | null> {
+    const user = await this.usersRepository.findOne({ where: { resetPasswordTokenHash: tokenHash } });
+    if (!user || !user.resetPasswordExpires) return null;
+    if (new Date(user.resetPasswordExpires).getTime() < Date.now()) return null;
+    return user;
+  }
+
+  async updatePasswordAndClearResetToken(userId: string, newPassword: string): Promise<void> {
+    const hashed = await bcrypt.hash(newPassword, 10);
+    await this.usersRepository.update(userId, {
+      password: hashed,
+      resetPasswordTokenHash: null,
+      resetPasswordExpires: null,
+    });
+  }
 }

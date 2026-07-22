@@ -12,6 +12,7 @@ import { AiModule } from './ai/ai.module';
 import { NotificationsModule } from './notifications/notifications.module';
 import { WatchesModule } from './watches/watches.module';
 import { CommentsModule } from './comments/comments.module';
+import { HealthModule } from './health/health.module';
 
 @Module({
   imports: [
@@ -54,6 +55,7 @@ import { CommentsModule } from './comments/comments.module';
     NotificationsModule,
     WatchesModule,
     CommentsModule,
+    HealthModule,
   ],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })

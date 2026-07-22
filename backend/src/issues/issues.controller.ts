@@ -128,6 +128,21 @@ export class IssuesController {
     return this.issuesService.removeOwn(id, req.user.userId, resolveLang(req));
   }
 
+  @Post(':id/rating')
+  rateIssue(@Param('id') id: string, @Body('rating') rating: number, @Req() req) {
+    return this.issuesService.rateIssue(id, req.user.userId, rating, resolveLang(req));
+  }
+
+  @Post(':id/confirm')
+  toggleConfirmation(@Param('id') id: string, @Req() req) {
+    return this.issuesService.toggleConfirmation(id, req.user.userId, resolveLang(req));
+  }
+
+  @Get(':id/confirm')
+  getConfirmationState(@Param('id') id: string, @Req() req) {
+    return this.issuesService.getConfirmationState(id, req.user.userId);
+  }
+
   @Patch(':id')
   @Roles(UserRole.ADMIN)
   update(@Param('id') id: string, @Body() dto: UpdateIssueDto) {

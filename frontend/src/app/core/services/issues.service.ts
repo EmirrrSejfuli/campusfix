@@ -79,4 +79,16 @@ export class IssuesService {
   getPublicStats(): Observable<PublicStats> {
     return this.http.get<PublicStats>(`${API_BASE_URL}/public-stats`);
   }
+
+  rateIssue(id: string, rating: number): Observable<Issue> {
+    return this.http.post<Issue>(`${API_BASE_URL}/issues/${id}/rating`, { rating });
+  }
+
+  toggleConfirmation(id: string): Observable<{ confirmed: boolean; count: number }> {
+    return this.http.post<{ confirmed: boolean; count: number }>(`${API_BASE_URL}/issues/${id}/confirm`, {});
+  }
+
+  getConfirmationState(id: string): Observable<{ confirmed: boolean; count: number }> {
+    return this.http.get<{ confirmed: boolean; count: number }>(`${API_BASE_URL}/issues/${id}/confirm`);
+  }
 }
