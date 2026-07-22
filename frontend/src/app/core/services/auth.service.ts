@@ -17,9 +17,9 @@ export class AuthService {
 
   constructor(private http: HttpClient, private router: Router) {}
 
-  register(fullName: string, email: string, password: string, studentIndex?: string): Observable<AuthResponse> {
+  register(fullName: string, email: string, password: string, studentIndex?: string, captchaToken?: string): Observable<AuthResponse> {
     return this.http
-      .post<AuthResponse>(`${API_BASE_URL}/auth/register`, { fullName, email, password, studentIndex })
+      .post<AuthResponse>(`${API_BASE_URL}/auth/register`, { fullName, email, password, studentIndex, captchaToken })
       .pipe(tap((res) => this.persistSession(res)));
   }
 

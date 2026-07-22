@@ -15,6 +15,9 @@ describe('AuthService', () => {
       setResetToken: jest.fn(),
       findByValidResetTokenHash: jest.fn(),
       updatePasswordAndClearResetToken: jest.fn(),
+      isAccountLocked: jest.fn().mockReturnValue(false),
+      registerFailedLogin: jest.fn(),
+      resetFailedLogins: jest.fn(),
     };
     jwtService = { sign: jest.fn().mockReturnValue('signed-jwt-token') };
     mailService = { sendPasswordResetEmail: jest.fn() };
@@ -42,6 +45,38 @@ describe('AuthService', () => {
 
       expect(result.accessToken).toBe('signed-jwt-token');
       expect(result.user.email).toBe('a@test.com');
+    });
+
+    it('resets the failed-attempt counter on a successful login', async () => {
+      usersService.findByEmail.mockResolvedValue({ id: '1', email: 'a@test.com', password: 'hashed', role: 'student', fullName: 'A' });
+      usersService.validatePassword.mockResolvedValue(true);
+
+      await service.login({ email: 'a@test.com', password: 'correct' });
+
+      expect(usersService.resetFailedLogins).toHaveBeenCalledWith('1');
+    });
+
+    it('registers a failed attempt when the password is wrong', async () => {
+      usersService.findByEmail.mockResolvedValue({ id: '1', email: 'a@test.com', password: 'hashed', role: 'student', fullName: 'A' });
+      usersService.validatePassword.mockResolvedValue(false);
+
+      await expect(service.login({ email: 'a@test.com', password: 'wrong' })).rejects.toThrow(UnauthorizedException);
+      expect(usersService.registerFailedLogin).toHaveBeenCalledWith('1');
+    });
+
+    it('rejects login while the account is locked, without checking the password', async () => {
+      usersService.findByEmail.mockResolvedValue({
+        id: '1',
+        email: 'a@test.com',
+        password: 'hashed',
+        role: 'student',
+        fullName: 'A',
+        lockedUntil: new Date(Date.now() + 10 * 60 * 1000),
+      });
+      usersService.isAccountLocked.mockReturnValue(true);
+
+      await expect(service.login({ email: 'a@test.com', password: 'correct' })).rejects.toThrow(UnauthorizedException);
+      expect(usersService.validatePassword).not.toHaveBeenCalled();
     });
   });
 

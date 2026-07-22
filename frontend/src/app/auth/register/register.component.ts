@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../core/services/auth.service';
+import { RecaptchaService } from '../../core/services/recaptcha.service';
 import { TranslationService } from '../../core/services/translation.service';
 import { TranslatePipe } from '../../shared/pipes/translate.pipe';
 
@@ -80,15 +81,21 @@ export class RegisterComponent {
     password: ['', [Validators.required, Validators.minLength(6)]],
   });
 
-  constructor(private auth: AuthService, private router: Router, public translation: TranslationService) {}
+  constructor(
+    private auth: AuthService,
+    private router: Router,
+    public translation: TranslationService,
+    private recaptcha: RecaptchaService,
+  ) {}
 
-  submit(): void {
+  async submit(): Promise<void> {
     if (this.form.invalid) return;
     this.loading = true;
     this.errorMsg = '';
     const { fullName, email, password, studentIndex } = this.form.getRawValue();
+    const captchaToken = await this.recaptcha.getToken('register');
 
-    this.auth.register(fullName!, email!, password!, studentIndex || undefined).subscribe({
+    this.auth.register(fullName!, email!, password!, studentIndex || undefined, captchaToken).subscribe({
       next: () => {
         this.loading = false;
         this.router.navigate(['/report']);

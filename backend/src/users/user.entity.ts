@@ -32,6 +32,12 @@ export class User {
   @Column({ nullable: true, type: 'timestamp' })
   resetPasswordExpires: Date | null;
 
+  @Column({ default: 0 })
+  failedLoginAttempts: number;
+
+  @Column({ nullable: true, type: 'timestamp' })
+  lockedUntil: Date | null;
+
   @CreateDateColumn()
   createdAt: Date;
 

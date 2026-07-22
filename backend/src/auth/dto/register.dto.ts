@@ -15,4 +15,8 @@ export class RegisterDto {
   @IsOptional()
   @IsString()
   studentIndex?: string;
+
+  @IsOptional()
+  @IsString()
+  captchaToken?: string;
 }

@@ -1,4 +1,4 @@
-import { Controller, Post, Body, Req } from '@nestjs/common';
+import { Controller, Post, Body, Req, BadRequestException } from '@nestjs/common';
 import { Throttle } from '@nestjs/throttler';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
@@ -6,6 +6,7 @@ import { LoginDto } from './dto/login.dto';
 import { ForgotPasswordDto } from './dto/forgot-password.dto';
 import { ResetPasswordDto } from './dto/reset-password.dto';
 import { resolveLang } from '../common/i18n';
+import { verifyCaptcha } from '../common/recaptcha';
 
 @Controller('auth')
 export class AuthController {
@@ -13,8 +14,17 @@ export class AuthController {
 
   @Post('register')
   @Throttle({ default: { limit: 5, ttl: 60000 } })
-  register(@Body() dto: RegisterDto, @Req() req) {
-    return this.authService.register(dto, resolveLang(req));
+  async register(@Body() dto: RegisterDto, @Req() req) {
+    const lang = resolveLang(req);
+    const captchaOk = await verifyCaptcha(dto.captchaToken);
+    if (!captchaOk) {
+      const msg =
+        lang === 'en' ? 'Verification failed. Please try again.'
+        : lang === 'mk' ? 'Верификацијата не успеа. Обиди се повторно.'
+        : 'Verifikimi dështoi. Provoni sërish.';
+      throw new BadRequestException(msg);
+    }
+    return this.authService.register(dto, lang);
   }
 
   @Post('login')

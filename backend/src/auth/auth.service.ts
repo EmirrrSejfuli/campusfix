@@ -26,9 +26,18 @@ export class AuthService {
     const user = await this.usersService.findByEmail(dto.email);
     if (!user) throw new UnauthorizedException(t(lang, 'invalidCredentials'));
 
-    const isValid = await this.usersService.validatePassword(dto.password, user.password);
-    if (!isValid) throw new UnauthorizedException(t(lang, 'invalidCredentials'));
+    if (this.usersService.isAccountLocked(user)) {
+      const minutesLeft = Math.ceil((new Date(user.lockedUntil!).getTime() - Date.now()) / 60000);
+      throw new UnauthorizedException(t(lang, 'accountLocked').replace('{minutes}', String(minutesLeft)));
+    }
 
+    const isValid = await this.usersService.validatePassword(dto.password, user.password);
+    if (!isValid) {
+      await this.usersService.registerFailedLogin(user.id);
+      throw new UnauthorizedException(t(lang, 'invalidCredentials'));
+    }
+
+    await this.usersService.resetFailedLogins(user.id);
     return this.buildTokenResponse(user);
   }
 

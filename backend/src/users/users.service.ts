@@ -66,4 +66,24 @@ export class UsersService {
       resetPasswordExpires: null,
     });
   }
+
+  /** Increments the failed-login counter, locking the account temporarily after too many attempts. */
+  async registerFailedLogin(userId: string, maxAttempts = 5, lockMinutes = 15): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) return;
+    const attempts = (user.failedLoginAttempts ?? 0) + 1;
+    const update: Partial<User> = { failedLoginAttempts: attempts };
+    if (attempts >= maxAttempts) {
+      update.lockedUntil = new Date(Date.now() + lockMinutes * 60 * 1000);
+    }
+    await this.usersRepository.update(userId, update);
+  }
+
+  async resetFailedLogins(userId: string): Promise<void> {
+    await this.usersRepository.update(userId, { failedLoginAttempts: 0, lockedUntil: null });
+  }
+
+  isAccountLocked(user: User): boolean {
+    return !!user.lockedUntil && new Date(user.lockedUntil).getTime() > Date.now();
+  }
 }
