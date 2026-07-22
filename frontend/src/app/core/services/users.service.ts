@@ -15,4 +15,12 @@ export class UsersService {
   getMyStats(): Observable<UserStats> {
     return this.http.get<UserStats>(`${API_BASE_URL}/users/me/stats`);
   }
+
+  getAll(): Observable<User[]> {
+    return this.http.get<User[]>(`${API_BASE_URL}/users`);
+  }
+
+  updateRole(userId: string, role: 'student' | 'admin'): Observable<User> {
+    return this.http.patch<User>(`${API_BASE_URL}/users/${userId}/role`, { role });
+  }
 }

@@ -34,6 +34,7 @@ import { TranslatePipe } from '../pipes/translate.pipe';
           <a routerLink="/admin/issues" routerLinkActive="active">{{ 'nav.manage' | translate }}</a>
           <a routerLink="/map" routerLinkActive="active">{{ 'nav.map' | translate }}</a>
           <a routerLink="/admin/qr" routerLinkActive="active">{{ 'nav.qr' | translate }}</a>
+          <a routerLink="/admin/users" routerLinkActive="active">{{ 'nav.manageUsers' | translate }}</a>
         </ng-container>
       </div>
 

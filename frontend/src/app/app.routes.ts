@@ -71,5 +71,10 @@ export const routes: Routes = [
     canActivate: [adminGuard],
     loadComponent: () => import('./admin/qr-generator/qr-generator.component').then((m) => m.QrGeneratorComponent),
   },
+  {
+    path: 'admin/users',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./admin/manage-users/manage-users.component').then((m) => m.ManageUsersComponent),
+  },
   { path: '**', redirectTo: 'login' },
 ];
