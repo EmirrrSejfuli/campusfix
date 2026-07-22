@@ -83,6 +83,7 @@ const OVERDUE_HOURS = 24;
           <div class="meta">
             <span class="cat">{{ translation.categoryName(issue.category?.name) }}</span>
             <span class="loc" *ngIf="issue.location">{{ issue.location }}</span>
+            <span class="gps-tag" *ngIf="issue.latitude && issue.longitude" [title]="'detail.gpsLocation' | translate">📍 GPS</span>
             <span class="by">{{ 'manage.reportedBy' | translate }} {{ issue.reportedBy?.fullName }}</span>
             <span class="date">{{ issue.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
           </div>
@@ -130,6 +131,7 @@ const OVERDUE_HOURS = 24;
     h3 a:hover { color: var(--accent); }
     .desc { color: var(--ink-soft); font-size: 13.5px; margin: 8px 0; line-height: 1.5; }
     .meta { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--ink-faint); flex-wrap: wrap; }
+    .gps-tag { color: var(--success); font-weight: 600; }
     .dup { color: var(--warning); font-size: 12px; margin: 10px 0 0; font-weight: 600; }
     .actions { display: flex; gap: 10px; margin-top: 14px; align-items: center; }
     .actions select { width: auto; min-width: 130px; }

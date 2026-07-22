@@ -76,6 +76,14 @@ const OVERDUE_HOURS = 24; // high-urgency reports still open after this many hou
           <span class="meta-label">{{ 'detail.date' | translate }}</span>
           <span class="meta-value">{{ issue.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
         </div>
+        <div class="meta-item" *ngIf="issue.latitude && issue.longitude">
+          <span class="meta-label">{{ 'detail.gpsLocation' | translate }}</span>
+          <span class="meta-value">
+            <a class="map-link" [href]="'https://www.google.com/maps?q=' + issue.latitude + ',' + issue.longitude" target="_blank" rel="noopener">
+              {{ issue.latitude | number: '1.5-5' }}, {{ issue.longitude | number: '1.5-5' }} — {{ 'detail.viewOnMap' | translate }} ↗
+            </a>
+          </span>
+        </div>
       </div>
 
       <p class="dup" *ngIf="issue.isPossibleDuplicate">⚠ {{ 'detail.duplicateWarning' | translate }}</p>
@@ -163,6 +171,8 @@ const OVERDUE_HOURS = 24; // high-urgency reports still open after this many hou
       background: var(--accent-bg); border: none; border-radius: 5px; padding: 3px 8px;
     }
     .watch-btn:hover { background: #FFE3D3; }
+    .map-link { color: var(--accent); text-decoration: none; font-weight: 500; }
+    .map-link:hover { text-decoration: underline; }
     .dup { color: var(--warning); font-size: 13px; margin: 16px 0 0; font-weight: 600; }
     .confirm-row { display: flex; align-items: center; gap: 12px; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--line); }
     .confirm-count { font-size: 12.5px; color: var(--ink-soft); }

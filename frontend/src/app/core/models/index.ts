@@ -31,6 +31,8 @@ export interface Issue {
   title: string;
   description: string;
   location?: string;
+  latitude?: number | null;
+  longitude?: number | null;
   imageUrl?: string;
   imageUrlsJson?: string | null;
   status: IssueStatus;

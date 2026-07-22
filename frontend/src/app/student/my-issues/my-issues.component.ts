@@ -36,6 +36,7 @@ import { TranslationService } from '../../core/services/translation.service';
             <span class="badge badge-{{issue.urgency}}">{{ ('urgency.' + issue.urgency) | translate }}</span>
             <span class="cat">{{ translation.categoryName(issue.category?.name) }}</span>
             <span class="loc" *ngIf="issue.location">{{ issue.location }}</span>
+            <span class="gps-tag" *ngIf="issue.latitude && issue.longitude" [title]="'detail.gpsLocation' | translate">📍 GPS</span>
             <span class="date">{{ issue.createdAt | date: 'dd/MM/yyyy HH:mm' }}</span>
           </div>
           <p class="dup" *ngIf="issue.isPossibleDuplicate">⚠ {{ 'manage.duplicateWarning' | translate }}</p>
@@ -59,6 +60,7 @@ import { TranslationService } from '../../core/services/translation.service';
     h3 { margin: 0; font-size: 15.5px; color: var(--ink); font-weight: 600; }
     .desc { color: var(--ink-soft); font-size: 13.5px; margin: 8px 0; line-height: 1.5; }
     .meta { display: flex; align-items: center; gap: 12px; font-size: 12px; color: var(--ink-faint); flex-wrap: wrap; }
+    .gps-tag { color: var(--success); font-weight: 600; }
     .dup { color: var(--warning); font-size: 12px; margin: 10px 0 0; font-weight: 600; }
     .edit-hint { color: var(--accent); font-size: 11.5px; margin: 8px 0 0; font-weight: 600; }
   `],
