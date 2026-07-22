@@ -46,4 +46,14 @@ export class RecaptchaService {
       return undefined; // fail open — don't block registration if reCAPTCHA itself fails to load
     }
   }
+
+  /** Loads the reCAPTCHA script (and shows its badge) as soon as a page mounts,
+   *  without waiting for form submission — needed so the badge is visible immediately. */
+  preload(): void {
+    if (!environment.recaptchaSiteKey) return;
+    this.loadScript().catch(() => {
+      // Silently ignore — getToken() will simply return undefined later, and
+      // the backend skips verification if it never receives a token.
+    });
+  }
 }

@@ -159,3 +159,9 @@ label {
   color: var(--ink-faint);
   letter-spacing: 0.03em;
 }
+
+/* Hide the floating reCAPTCHA v3 badge — its required legal notice is shown
+   in the footer instead, exactly as Google's terms of service permit. */
+.grecaptcha-badge {
+  visibility: hidden;
+}

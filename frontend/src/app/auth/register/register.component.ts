@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { RouterLink, Router } from '@angular/router';
@@ -68,7 +68,7 @@ import { TranslatePipe } from '../../shared/pipes/translate.pipe';
     .switch a { color: var(--accent); font-weight: 600; text-decoration: none; }
   `],
 })
-export class RegisterComponent {
+export class RegisterComponent implements OnInit {
   loading = false;
   errorMsg = '';
 
@@ -87,6 +87,11 @@ export class RegisterComponent {
     public translation: TranslationService,
     private recaptcha: RecaptchaService,
   ) {}
+
+  ngOnInit(): void {
+    // Load the reCAPTCHA badge as soon as this page mounts, not just at submit time.
+    this.recaptcha.preload();
+  }
 
   async submit(): Promise<void> {
     if (this.form.invalid) return;
