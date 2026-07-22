@@ -86,4 +86,17 @@ export class UsersService {
   isAccountLocked(user: User): boolean {
     return !!user.lockedUntil && new Date(user.lockedUntil).getTime() > Date.now();
   }
+
+  async findAll(): Promise<User[]> {
+    return this.usersRepository.find({ order: { createdAt: 'DESC' } });
+  }
+
+  async countAdmins(): Promise<number> {
+    return this.usersRepository.count({ where: { role: UserRole.ADMIN } });
+  }
+
+  async updateRole(userId: string, role: UserRole): Promise<User> {
+    await this.usersRepository.update(userId, { role });
+    return this.findById(userId);
+  }
 }

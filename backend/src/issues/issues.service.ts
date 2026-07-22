@@ -332,10 +332,14 @@ export class IssuesService {
   async getByLocation(limit = 10) {
     return this.issuesRepository
       .createQueryBuilder('issue')
-      .select('issue.location', 'location')
+      // Group by a normalized (trimmed, lowercased) form of the location so that
+      // "Lab 2", "lab 2", and "Lab 2 " (typed slightly differently by different
+      // reporters) are correctly counted as the same place, instead of showing
+      // up as separate near-duplicate rows.
+      .select('MIN(issue.location)', 'location')
       .addSelect('COUNT(*)', 'count')
       .where('issue.location IS NOT NULL')
-      .groupBy('issue.location')
+      .groupBy('LOWER(TRIM(issue.location))')
       .orderBy('count', 'DESC')
       .limit(limit)
       .getRawMany();
