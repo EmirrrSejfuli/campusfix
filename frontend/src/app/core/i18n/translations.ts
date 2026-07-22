@@ -25,7 +25,7 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'nav.admin': 'ADMIN',
 
     // Login
-    'login.eyebrow': 'Qasje e sigurt · JWT',
+    'login.eyebrow': '',
     'login.title': 'Kyçu në CampusFix',
     'login.subtitle': 'Raporto ose menaxho probleme në kampus.',
     'login.email': 'Email',
@@ -51,7 +51,7 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'register.loginHere': 'Kyçuni',
 
     // Report issue
-    'report.eyebrow': 'Klasifikim automatik nga AI',
+    'report.eyebrow': '',
     'report.title': 'Raporto një problem',
     'report.subtitle': 'Përshkruani problemin sa më qartë — kategoria dhe urgjenca sugjerohen automatikisht nëse i lini bosh.',
     'report.titleLabel': 'Titulli',
@@ -282,7 +282,7 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'nav.student': 'STUDENT',
     'nav.admin': 'ADMIN',
 
-    'login.eyebrow': 'Secure access · JWT',
+    'login.eyebrow': '',
     'login.title': 'Log in to CampusFix',
     'login.subtitle': 'Report or manage campus issues.',
     'login.email': 'Email',
@@ -306,7 +306,7 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'register.hasAccount': 'Already have an account?',
     'register.loginHere': 'Log in',
 
-    'report.eyebrow': 'Automatic AI classification',
+    'report.eyebrow': '',
     'report.title': 'Report an issue',
     'report.subtitle': 'Describe the issue as clearly as possible — category and urgency are auto-suggested if left blank.',
     'report.titleLabel': 'Title',
@@ -530,7 +530,7 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'nav.student': 'СТУДЕНТ',
     'nav.admin': 'АДМИН',
 
-    'login.eyebrow': 'Безбеден пристап · JWT',
+    'login.eyebrow': '',
     'login.title': 'Најави се на CampusFix',
     'login.subtitle': 'Пријавувај или управувај со проблеми на кампусот.',
     'login.email': 'Е-пошта',
@@ -554,7 +554,7 @@ export const TRANSLATIONS: Record<Lang, Record<string, string>> = {
     'register.hasAccount': 'Веќе имаш сметка?',
     'register.loginHere': 'Најави се',
 
-    'report.eyebrow': 'Автоматска AI класификација',
+    'report.eyebrow': '',
     'report.title': 'Пријави проблем',
     'report.subtitle': 'Опиши го проблемот што појасно — категоријата и итноста се предлагаат автоматски доколку се остават празни.',
     'report.titleLabel': 'Наслов',
